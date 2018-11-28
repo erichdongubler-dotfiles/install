@@ -1,0 +1,29 @@
+#! /bin/bash
+
+SUPPORTED_PACKAGE_MANAGERS=
+_INSTALL_BIN="$HOME/.local/bin"
+
+package_manager="$(sh <(curl -s https://raw.githubusercontent.com/erichdongubler-dotfiles/base/master/.local/bin/detect-package-manager))"
+# package_manager="$(./detect-package-manager)"
+if ! [ $? ]; then
+	exit 1
+fi
+
+for package in git curl; do
+	if command -v "$package" > /dev/null; then
+		echo "\`$package\` command detected, skipping install"
+	else
+		echo "\`$package\` command not detected, installing..."
+		"$PACKAGE_MANAGER_INSTALL_COMMAND" "$@"
+	fi
+done
+
+mkdir -p "$_INSTALL_BIN"
+pushd "$_INSTALL_BIN" && export PATH="$PATH:$_INSTALL_BIN" && curl -O "https://raw.githubusercontent.com/RichiH/vcsh/master/vcsh" && chmod +x "$_INSTALL_BIN/vcsh"
+popd
+
+for package in base "$@"; do
+	vcsh clone git@github.com:erichdongubler-dotfiles/"$package".git
+done
+
+echo "Done! If you're in bash, the run \`. ~/.bash_profile\`."
