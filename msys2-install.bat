@@ -47,13 +47,12 @@ if %errorLevel% neq 0 (
 	popd
 	exit /B 1
 )
-popd
 
-pushd %script_dir%\..
-C:\tools\msys64\msys2.exe "./install-dotfiles %DOTFILES_TO_INSTALL%"
+C:\tools\msys64\msys2.exe sh -c "./install-dotfiles %DOTFILES_TO_INSTALL%; sleep 5s"
 if %errorLevel% neq 0 (
 	echo Dotfile installation failed, exiting.
 	popd
 	exit /B 1
 )
+
 popd
